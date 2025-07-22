@@ -1,0 +1,1720 @@
+{
+  "openapi" : "3.0.0",
+  "servers" : [ {
+    "description" : "SwaggerHub API Auto Mocking",
+    "url" : "https://virtserver.swaggerhub.com/voron/updatedMethods/1.0.0"
+  }, {
+    "description" : "API server",
+    "url" : "https://api.everent.me"
+  } ],
+  "info" : {
+    "version" : "1.0.0",
+    "title" : "Some methods",
+    "description" : "Обновлённые методы приложения"
+  },
+  "tags" : [ {
+    "name" : "Карточка автомобиля",
+    "description" : "Методы используемые на карточке автомобиля"
+  }, {
+    "name" : "Каталог",
+    "description" : "Методы используемые на вкладке \"Каталог\""
+  }, {
+    "name" : "Карта",
+    "description" : "Методы используемые на вкладке \"Карта\""
+  }, {
+    "name" : "Доставка",
+    "description" : "Методы используемые на вкладке \"Доставка\""
+  }, {
+    "name" : "Сессия",
+    "description" : "Методы используемые в режиме Поездки"
+  } ],
+  "paths" : {
+    "/v9/device_card.php/guest/{device_id}/{random}" : {
+      "get" : {
+        "tags" : [ "Карточка автомобиля" ],
+        "summary" : "вариант карточки для неавторизованного пользователя",
+        "operationId" : "getDevice",
+        "security" : [ ],
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/deviceParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeviceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/device_card.php/client/{phone}/{device_id}/{key}/{random}" : {
+      "get" : {
+        "tags" : [ "Карточка автомобиля" ],
+        "summary" : "вариант карточки для авторизованного пользователя",
+        "operationId" : "getDeviceForClient",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/deviceParam"
+        }, {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeviceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/catalog.php/getCatalog/{latitude}/{longitude}/{random}" : {
+      "get" : {
+        "tags" : [ "Каталог" ],
+        "summary" : "Дерево разделов каталога для неавторизованного пользователя",
+        "operationId" : "getCatalog",
+        "security" : [ ],
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/randomParam"
+        }, {
+          "$ref" : "#/components/parameters/latitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/longitudeParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/catalog.php/getCatalogWithPhone/{phone}/{key}/{latitude}/{longitude}/{random}" : {
+      "get" : {
+        "tags" : [ "Каталог" ],
+        "summary" : "Дерево разделов каталога для авторизованного пользователя",
+        "operationId" : "getCatalogWithPhone",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        }, {
+          "$ref" : "#/components/parameters/latitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/longitudeParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/map.php/list_for_guest" : {
+      "post" : {
+        "tags" : [ "Карта" ],
+        "summary" : "список автомобилей/прокатов для отображения на карте у неавторизованного пользователя",
+        "operationId" : "getMapDevicesByCategory",
+        "security" : [ ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "filters" : {
+                    "type" : "object",
+                    "description" : "набор фильтров в формате filters[category]=0&filters[point]=123"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "latitude", "longitude" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "devices", "points", "delivery", "geozones" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса",
+                      "example" : true
+                    },
+                    "devices" : {
+                      "type" : "array",
+                      "description" : "список автомобилей",
+                      "items" : {
+                        "$ref" : "#/components/schemas/MainMapDevice"
+                      }
+                    },
+                    "points" : {
+                      "type" : "array",
+                      "description" : "список точек проката",
+                      "items" : {
+                        "$ref" : "#/components/schemas/Point"
+                      }
+                    },
+                    "geozones" : {
+                      "type" : "object",
+                      "description" : "Объект содержащий пары 'id_геозоны:геозона'",
+                      "additionalProperties" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "number",
+                            "format" : "double"
+                          },
+                          "example" : [ 55.631982677259, 37.806844524145 ]
+                        }
+                      }
+                    },
+                    "delivery" : {
+                      "type" : "object",
+                      "description" : "Данные маркера доставки",
+                      "properties" : {
+                        "latitude" : {
+                          "type" : "number",
+                          "format" : "double",
+                          "description" : "геопозиция, широта",
+                          "example" : 55.751667
+                        },
+                        "longitude" : {
+                          "type" : "number",
+                          "format" : "double",
+                          "description" : "геопозиция, долгота",
+                          "example" : 37.617778
+                        },
+                        "title" : {
+                          "type" : "string",
+                          "description" : "тип авто",
+                          "example" : "LS 460 4.6L long"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/map.php/list_for_client" : {
+      "post" : {
+        "tags" : [ "Карта" ],
+        "summary" : "список автомобилей/прокатов для отображения на карте у авторизованного пользователя",
+        "operationId" : "getMapDevicesByCategoryWithPhone",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "filters" : {
+                    "type" : "object",
+                    "description" : "набор фильтров в формате filters[category]=0&filters[point]=123"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "phone", "key", "latitude", "longitude" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "devices", "points", "delivery", "geozones" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса",
+                      "example" : true
+                    },
+                    "devices" : {
+                      "type" : "array",
+                      "description" : "список автомобилей",
+                      "items" : {
+                        "$ref" : "#/components/schemas/MainMapDevice"
+                      }
+                    },
+                    "points" : {
+                      "type" : "array",
+                      "description" : "список точек проката",
+                      "items" : {
+                        "$ref" : "#/components/schemas/Point"
+                      }
+                    },
+                    "geozones" : {
+                      "type" : "object",
+                      "description" : "Объект содержащий пары 'id_геозоны:геозона'",
+                      "additionalProperties" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "array",
+                          "items" : {
+                            "type" : "number",
+                            "format" : "double"
+                          },
+                          "example" : [ 55.631982677259, 37.806844524145 ]
+                        }
+                      }
+                    },
+                    "delivery" : {
+                      "type" : "object",
+                      "description" : "Данные маркера доставки",
+                      "properties" : {
+                        "latitude" : {
+                          "type" : "number",
+                          "format" : "double",
+                          "description" : "геопозиция, широта",
+                          "example" : 55.751667
+                        },
+                        "longitude" : {
+                          "type" : "number",
+                          "format" : "double",
+                          "description" : "геопозиция, долгота",
+                          "example" : 37.617778
+                        },
+                        "title" : {
+                          "type" : "string",
+                          "description" : "тип авто",
+                          "example" : "LS 460 4.6L long"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/map.php/busy_list_for_guest" : {
+      "post" : {
+        "tags" : [ "Карта" ],
+        "summary" : "список занятых авто для неавторизованного пользователя",
+        "operationId" : "getBusyDevicesByCategory",
+        "security" : [ ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "filters" : {
+                    "type" : "object",
+                    "description" : "набор фильтров в формате filters[category]=0&filters[point]=123"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "latitude", "longitude" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BusyDevicesList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/map.php/busy_list_for_client" : {
+      "post" : {
+        "tags" : [ "Карта" ],
+        "summary" : "список занятых авто для авторизованного пользователя",
+        "operationId" : "getBusyDevicesByCategoryWithPhone",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "filters" : {
+                    "type" : "object",
+                    "description" : "набор фильтров в формате filters[category]=0&filters[point]=123"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "latitude", "longitude", "phone", "key" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/BusyDevicesList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/map.php/free_list_for_guest" : {
+      "post" : {
+        "tags" : [ "Карта" ],
+        "summary" : "список свободных авто для неавторизованного пользователя",
+        "operationId" : "getMapTableDevicesByCategory",
+        "security" : [ ],
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "filters" : {
+                    "type" : "object",
+                    "description" : "набор фильтров в формате filters[category]=0&filters[point]=123"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "latitude", "longitude" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeviceTableItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/map.php/free_list_for_client" : {
+      "post" : {
+        "tags" : [ "Карта" ],
+        "summary" : "список свободных авто для авторизованного пользователя",
+        "operationId" : "getMapTableDevicesByCategoryWithPhone",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "filters" : {
+                    "type" : "object",
+                    "description" : "набор фильтров в формате filters[category]=0&filters[point]=123"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "latitude", "longitude", "phone", "key" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeviceTableItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "securitySchemes" : {
+      "needAuth" : {
+        "type" : "apiKey",
+        "name" : "key",
+        "in" : "query"
+      }
+    },
+    "parameters" : {
+      "keyParam" : {
+        "in" : "path",
+        "name" : "key",
+        "description" : "токен авторизации запроса",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+        }
+      },
+      "randomParam" : {
+        "in" : "path",
+        "name" : "random",
+        "description" : "случайный набор символов для исключения кеширования результата",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "example" : "0f279a72ed51762ecf9f74c"
+        }
+      },
+      "deviceParam" : {
+        "in" : "path",
+        "name" : "device_id",
+        "description" : "id авто",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "example" : 4155
+        }
+      },
+      "tariffParam" : {
+        "in" : "path",
+        "name" : "tariff_id",
+        "description" : "id тарифа",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "example" : 943
+        }
+      },
+      "messageParam" : {
+        "in" : "path",
+        "name" : "message_id",
+        "description" : "id сообщения",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "example" : 72776
+        }
+      },
+      "sessionParam" : {
+        "in" : "path",
+        "name" : "ses_id",
+        "description" : "id сессии",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "example" : 23000
+        }
+      },
+      "phoneParam" : {
+        "in" : "path",
+        "name" : "phone",
+        "description" : "номер телефона клиента",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "example" : 9647725777
+        }
+      },
+      "categoryParam" : {
+        "in" : "path",
+        "name" : "category_id",
+        "description" : "id категории",
+        "required" : true,
+        "schema" : {
+          "type" : "integer",
+          "example" : 761
+        }
+      },
+      "latitudeParam" : {
+        "in" : "path",
+        "name" : "latitude",
+        "description" : "широта",
+        "required" : true,
+        "schema" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 55.751667
+        }
+      },
+      "longitudeParam" : {
+        "in" : "path",
+        "name" : "longitude",
+        "description" : "долгота",
+        "required" : true,
+        "schema" : {
+          "type" : "number",
+          "format" : "double",
+          "example" : 37.617778
+        }
+      }
+    },
+    "schemas" : {
+      "CategoryResponse" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "type" : "object",
+            "required" : [ "version", "categories", "space_enabled", "black_enabled", "club_enabled", "fast_delivery_enabled", "delivery_enabled", "rent_to_buy_enabled", "test_drive_enabled", "got_free_car_for_test_drive", "got_free_car_for_rent_to_buy" ],
+            "properties" : {
+              "space_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки space"
+              },
+              "black_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки black"
+              },
+              "club_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки club"
+              },
+              "delivery_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки \"доставка\""
+              },
+              "fast_delivery_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки \"быстрая доставка\", приоритетнее \"доставки\""
+              },
+              "rent_to_buy_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки \"аренда с выкупом\""
+              },
+              "test_drive_enabled" : {
+                "type" : "boolean",
+                "description" : "Активность иконки \"тест драйв\""
+              },
+              "got_free_car_for_test_drive" : {
+                "type" : "boolean",
+                "description" : "При true, переход идёт на карту, при false на список \"занято\"  Фильтр применяется в обоих случаях"
+              },
+              "got_free_car_for_rent_to_buy" : {
+                "type" : "boolean",
+                "description" : "При true, переход идёт на карту, при false на список \"занято\"  Фильтр применяется в обоих случаях"
+              },
+              "version" : {
+                "type" : "string",
+                "example" : "f4bd7e76e883f2a1d4a6b76972b36769",
+                "description" : "версия каталога"
+              },
+              "categories" : {
+                "type" : "array",
+                "description" : "разделы каталога",
+                "items" : {
+                  "$ref" : "#/components/schemas/Category"
+                }
+              }
+            },
+            "description" : "результат выполнения запроса"
+          }
+        }
+      },
+      "BusyDevicesList" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "type" : "object",
+            "properties" : {
+              "sort" : {
+                "type" : "array",
+                "description" : "Порядок отображения категорий",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "categories" : {
+                "type" : "object",
+                "description" : "Объект содержащий пары 'id_category:title'",
+                "additionalProperties" : {
+                  "type" : "string"
+                }
+              },
+              "carsByCategory" : {
+                "type" : "object",
+                "description" : "Объект содержащий пары 'id_category:carsArray'",
+                "additionalProperties" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/components/schemas/CarBusyItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CarBusyItem" : {
+        "type" : "object",
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/CarItem"
+        }, {
+          "type" : "object",
+          "required" : [ "stateInfo" ],
+          "properties" : {
+            "stateInfo" : {
+              "type" : "string",
+              "description" : "причина статуса",
+              "example" : "У владельца"
+            }
+          }
+        }, {
+          "type" : "object",
+          "required" : [ "stateTime" ],
+          "properties" : {
+            "stateTime" : {
+              "type" : "integer",
+              "description" : "время статуса (сек)",
+              "example" : 3600
+            }
+          }
+        } ]
+      },
+      "DeviceTableItem" : {
+        "type" : "object",
+        "required" : [ "id", "typeId", "title", "categoryTitle", "baseCategoryTitle", "image", "longitude", "latitude", "region", "distance", "noDepositFor1xClients" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "id авто",
+            "example" : 4189
+          },
+          "typeId" : {
+            "type" : "integer",
+            "description" : "id типа авто",
+            "example" : 517
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "название авто",
+            "example" : "LS 460 4.6L long"
+          },
+          "categoryTitle" : {
+            "type" : "string",
+            "description" : "категория автомобиля",
+            "example" : "Lexus"
+          },
+          "baseCategoryTitle" : {
+            "type" : "string",
+            "description" : "базовый раздел каталога",
+            "example" : "Седан"
+          },
+          "image" : {
+            "type" : "string",
+            "description" : "путь до картинки превью",
+            "example" : "files/aadcd7fcc96942e34bb1c083e59b91d5.png"
+          },
+          "latitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, широта",
+            "example" : 55.751667
+          },
+          "longitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, долгота",
+            "example" : 37.617778
+          },
+          "region" : {
+            "type" : "integer",
+            "description" : "Регион местоположения автомобиля",
+            "example" : 99
+          },
+          "distance" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "дистанция до автомобиля, км",
+            "example" : 5.1
+          },
+          "noDepositFor1xClients" : {
+            "type" : "boolean",
+            "description" : "Признак отсутсвия депозита для клиентов с deposit_coefficient = 1"
+          },
+          "in_garage" : {
+            "type" : "boolean",
+            "description" : "Признак наличия автомобиля в \"гараже\""
+          },
+          "got_buy_to_rent" : {
+            "type" : "boolean",
+            "description" : "Признак наличия у автомобиля тарифа с выкупом"
+          },
+          "club" : {
+            "type" : "boolean",
+            "description" : "Признак клубного авто"
+          }
+        }
+      },
+      "DeviceResponse" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "$ref" : "#/components/schemas/Device"
+          }
+        }
+      },
+      "Point" : {
+        "type" : "object",
+        "required" : [ "id", "title", "latitude", "longitude" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "id клуба",
+            "example" : 822
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "название клуба",
+            "example" : "Рублёвское шоссе"
+          },
+          "latitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, широта",
+            "example" : 55.751667
+          },
+          "longitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, долгота",
+            "example" : 37.617778
+          }
+        }
+      },
+      "MainMapDevice" : {
+        "type" : "object",
+        "required" : [ "id", "typeId", "title", "categoryTitle", "image", "longitude", "latitude", "angle", "status", "deposit", "minRentCost", "maxRentCost", "currentRentCost", "waitingCost", "parkingCost", "timeUnit", "fuel", "isAllocated", "parkingType", "fuelDisable", "geoZones", "pointGeoZones", "region", "in_garage", "fake" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "id авто",
+            "example" : 4189
+          },
+          "typeId" : {
+            "type" : "integer",
+            "description" : "id типа авто",
+            "example" : 517
+          },
+          "status" : {
+            "type" : "integer",
+            "enum" : [ 0, 1, 4, 12 ],
+            "description" : "статус авто",
+            "example" : 0
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "название авто",
+            "example" : "LS 460 4.6L long"
+          },
+          "categoryTitle" : {
+            "type" : "string",
+            "description" : "категория автомобиля",
+            "example" : "Lexus"
+          },
+          "fuel" : {
+            "type" : "integer",
+            "description" : "уровень топлива (проценты)",
+            "example" : 90
+          },
+          "fuelDisable" : {
+            "type" : "boolean",
+            "description" : "признак отключенного датчика уровня топлива",
+            "example" : false
+          },
+          "deposit" : {
+            "type" : "integer",
+            "description" : "требуемый размер страхового депозита",
+            "example" : 10000
+          },
+          "image" : {
+            "type" : "string",
+            "description" : "путь до картинки превью",
+            "example" : "files/aadcd7fcc96942e34bb1c083e59b91d5.png"
+          },
+          "angle" : {
+            "type" : "integer",
+            "description" : "геопозиция, угол поворота авто (градусы)",
+            "example" : 10
+          },
+          "latitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, широта",
+            "example" : 55.751667
+          },
+          "longitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, долгота",
+            "example" : 37.617778
+          },
+          "parkingCost" : {
+            "type" : "integer",
+            "description" : "наценка к стоимости минуты ожидания при платной парковке",
+            "example" : 1
+          },
+          "waitingCost" : {
+            "type" : "integer",
+            "description" : "стоимости минуты ожидания",
+            "example" : 4
+          },
+          "geoZones" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "example" : [ "123", "321" ],
+            "description" : "массив идентификаторов геозон автомобиля"
+          },
+          "pointGeoZones" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "example" : [ "123", "321" ],
+            "description" : "массив идентификаторов геозон проката"
+          },
+          "isAllocated" : {
+            "type" : "boolean",
+            "description" : "признак что этот авто в аренде у запрашивающего клиента",
+            "example" : true
+          },
+          "timeUnit" : {
+            "type" : "integer",
+            "enum" : [ 0, 1, 2, 3, 4 ],
+            "description" : "единица измерения времени поездки",
+            "example" : 0
+          },
+          "maxRentCost" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "максимальная стоимость единицы времени поездки",
+            "example" : 20
+          },
+          "minRentCost" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "минимальная стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "currentRentCost" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "текущая стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "region" : {
+            "type" : "integer",
+            "description" : "Регион местоположения автомобиля",
+            "example" : 99
+          },
+          "fake" : {
+            "type" : "boolean",
+            "description" : "Признак фиктивных координат автомобиля",
+            "example" : false
+          },
+          "in_garage" : {
+            "type" : "boolean",
+            "description" : "Признак нахождения авто в \"гараже\" клиенты",
+            "example" : true
+          }
+        }
+      },
+      "Device" : {
+        "type" : "object",
+        "required" : [ "id", "typeId", "point", "status", "title", "image" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "id авто",
+            "example" : 4189
+          },
+          "typeId" : {
+            "type" : "integer",
+            "description" : "id типа авто",
+            "example" : 517
+          },
+          "point" : {
+            "type" : "integer",
+            "description" : "id точки проката",
+            "example" : 578
+          },
+          "status" : {
+            "type" : "integer",
+            "enum" : [ 0, 1, 4, 12 ],
+            "description" : "статус авто",
+            "example" : 0
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "название авто",
+            "example" : "LS 460 4.6L long"
+          },
+          "categoryTitle" : {
+            "type" : "string",
+            "description" : "категория автомобиля",
+            "example" : "Lexus"
+          },
+          "fuel" : {
+            "type" : "integer",
+            "description" : "уровень топлива (проценты)",
+            "example" : 90
+          },
+          "fuelDisable" : {
+            "type" : "boolean",
+            "description" : "признак отключенного датчика уровня топлива",
+            "example" : false
+          },
+          "deliveryTime" : {
+            "type" : "integer",
+            "description" : "ожидаемое время доставки (минуты)",
+            "example" : 30
+          },
+          "deliveryRange" : {
+            "type" : "integer",
+            "description" : "дистанция доставки (км)",
+            "example" : 15
+          },
+          "freeBookingTime" : {
+            "type" : "integer",
+            "description" : "время бесплатного бронирования (часы)",
+            "example" : 1
+          },
+          "minDriverAge" : {
+            "type" : "integer",
+            "description" : "минимальный возраст водителя (годы)",
+            "example" : 25
+          },
+          "minLicenceAge" : {
+            "type" : "integer",
+            "description" : "минимальный стаж водителя (годы)",
+            "example" : 5
+          },
+          "minRentTime" : {
+            "type" : "integer",
+            "description" : "минимальное время поездки в поминутном тарифе в единицах измерения времени поездки",
+            "example" : 5
+          },
+          "minTimeAfterDelivery" : {
+            "type" : "integer",
+            "description" : "минимальное время поездки в поминутном тарифе после доставки (минуты)",
+            "example" : 60
+          },
+          "freeBookingTimeAfterDelivery" : {
+            "type" : "integer",
+            "description" : "бесплатное время бронирования после доставки (минуты)",
+            "example" : 0
+          },
+          "weekendSurcharge" : {
+            "type" : "integer",
+            "description" : "наценка к стоимости единицы времени поездки в выходные/праздники (процент)",
+            "example" : 0
+          },
+          "deposit" : {
+            "type" : "integer",
+            "description" : "требуемый размер страхового депозита",
+            "example" : 10000
+          },
+          "allowPickup" : {
+            "type" : "boolean",
+            "description" : "признак разрешения отображения авто на карте",
+            "example" : true
+          },
+          "allowDelivery" : {
+            "type" : "boolean",
+            "description" : "признак доступности доставки",
+            "example" : true
+          },
+          "allowBooking" : {
+            "type" : "boolean",
+            "description" : "признак доступности бронирования",
+            "example" : true
+          },
+          "showParkingCost" : {
+            "type" : "boolean",
+            "description" : "разрешение отображения блока со стоимостью минуты ожидания/парковки",
+            "example" : true
+          },
+          "fuelType" : {
+            "type" : "string",
+            "description" : "тип топлива",
+            "example" : "Бензин АИ 95"
+          },
+          "parkingType" : {
+            "type" : "string",
+            "enum" : [ "restricted", "allow_free", "allow_paid" ],
+            "description" : "тип разрешения на платные парковки",
+            "example" : "allow_paid"
+          },
+          "finish380" : {
+            "type" : "string",
+            "enum" : [ "restricted", "allow", "day_only" ],
+            "description" : "возможность завершения на дорогих парковках",
+            "example" : "restricted"
+          },
+          "sku" : {
+            "type" : "string",
+            "description" : "госномер авто",
+            "example" : "С865СМ799"
+          },
+          "osagoUrl" : {
+            "type" : "string",
+            "format" : "url",
+            "description" : "ссылка на фотографию полиса ОСАГО",
+            "example" : "https://img.voron.io/pdf/12345.pdf"
+          },
+          "image" : {
+            "type" : "string",
+            "description" : "путь до картинки превью",
+            "example" : "files/aadcd7fcc96942e34bb1c083e59b91d5.png"
+          },
+          "video" : {
+            "type" : "string",
+            "format" : "url",
+            "description" : "ссылка на видео",
+            "example" : "https://img.voron.io/videos/IMG_1738_720p_hevc_vbr_high.mp4"
+          },
+          "description" : {
+            "type" : "string",
+            "description" : "текст описания авто",
+            "example" : "это текст"
+          },
+          "angle" : {
+            "type" : "integer",
+            "description" : "геопозиция, угол поворота авто (градусы)",
+            "example" : 10
+          },
+          "latitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, широта",
+            "example" : 55.751667
+          },
+          "longitude" : {
+            "type" : "number",
+            "format" : "double",
+            "description" : "геопозиция, долгота",
+            "example" : 37.617778
+          },
+          "parkingCost" : {
+            "type" : "integer",
+            "description" : "наценка к стоимости минуты ожидания при платной парковке",
+            "example" : 1
+          },
+          "waitingCost" : {
+            "type" : "integer",
+            "description" : "стоимости минуты ожидания",
+            "example" : 4
+          },
+          "geoZones" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "example" : [ "123", "321" ],
+            "description" : "массив идентификаторов геозон автомобиля"
+          },
+          "pointGeoZones" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            },
+            "example" : [ "123", "321" ],
+            "description" : "массив идентификаторов геозон проката"
+          },
+          "photos" : {
+            "type" : "array",
+            "description" : "массив названий фото",
+            "items" : {
+              "type" : "string",
+              "example" : "4fec2e6519278c6e930f827b282bee2a"
+            }
+          },
+          "saleData" : {
+            "type" : "object",
+            "description" : "объект с данными о покупке авто",
+            "required" : [ "price", "profit", "has_url" ],
+            "properties" : {
+              "price" : {
+                "type" : "integer",
+                "description" : "стоимость авто",
+                "example" : 1000000
+              },
+              "profit" : {
+                "type" : "integer",
+                "description" : "средний доход (₽/мес)",
+                "example" : 50000
+              },
+              "has_url" : {
+                "type" : "boolean",
+                "description" : "признак наличия ссылки на объявление",
+                "example" : true
+              },
+              "is_sale" : {
+                "type" : "boolean",
+                "description" : "признак выставленного на продажу авто"
+              },
+              "calc_url" : {
+                "type" : "string",
+                "example" : "https://voron.io/invest/?phone=123&device=345&dclass=6&dyear=2023",
+                "description" : "ссылка на инвестиционный проект"
+              }
+            }
+          },
+          "isAllocated" : {
+            "type" : "boolean",
+            "description" : "признак что этот авто в аренде у запрашивающего клиента",
+            "example" : true
+          },
+          "prePaidTariffs" : {
+            "type" : "array",
+            "description" : "массив дополнительных тарифов",
+            "items" : {
+              "type" : "object",
+              "description" : "объект с данными о доп. тарифе",
+              "required" : [ "id", "duration", "price", "with_driver", "rent_to_buy", "daily_payment" ],
+              "properties" : {
+                "id" : {
+                  "type" : "integer",
+                  "description" : "id тарифа",
+                  "example" : 1
+                },
+                "duration" : {
+                  "type" : "integer",
+                  "description" : "продолжительность (минуты)",
+                  "example" : 1440
+                },
+                "price" : {
+                  "type" : "integer",
+                  "description" : "стоимость",
+                  "example" : 12000
+                },
+                "with_driver" : {
+                  "type" : "boolean",
+                  "description" : "признак доставки с водителем",
+                  "example" : false
+                },
+                "rent_to_buy" : {
+                  "type" : "boolean",
+                  "description" : "признак тарифа с выкупом",
+                  "example" : false
+                },
+                "daily_payment" : {
+                  "type" : "integer",
+                  "description" : "суточный взнос для тарифа с выкупом",
+                  "example" : 1440
+                }
+              }
+            }
+          },
+          "timeUnit" : {
+            "type" : "integer",
+            "enum" : [ 0, 1, 2, 3, 4 ],
+            "description" : "единица измерения времени поездки",
+            "example" : 0
+          },
+          "tariffs" : {
+            "type" : "array",
+            "description" : "массив с базовыми тарифами",
+            "items" : {
+              "type" : "array",
+              "items" : {
+                "type" : "integer"
+              },
+              "example" : [ 3, 600 ]
+            }
+          },
+          "maxRentCost" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "максимальная стоимость единицы времени поездки",
+            "example" : 20
+          },
+          "minRentCost" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "минимальная стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "currentRentCost" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "текущая стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "depositMin" : {
+            "type" : "integer",
+            "description" : "минимальный депозит для типа авто",
+            "example" : 20000
+          },
+          "dailyMileageMax" : {
+            "type" : "integer",
+            "description" : "разрешённый суточный пробег автомобиля (0 - не ограничено)",
+            "example" : 150
+          },
+          "extraMileageCost" : {
+            "type" : "integer",
+            "description" : "стоимость километра перепробега",
+            "example" : 5
+          },
+          "haveOsago" : {
+            "type" : "boolean",
+            "description" : "наличие действующего полиса ОСАГО",
+            "example" : true
+          },
+          "haveKasco" : {
+            "type" : "boolean",
+            "description" : "наличие действующего полиса КАСКО",
+            "example" : false
+          },
+          "kascoFranchise" : {
+            "type" : "integer",
+            "description" : "размер франшизы по каско",
+            "example" : 0
+          },
+          "insuranceBlockEnable" : {
+            "type" : "boolean",
+            "description" : "Отображение блока \"Ответственность\"",
+            "example" : true
+          },
+          "region" : {
+            "type" : "integer",
+            "description" : "Регион местоположения автомобиля",
+            "example" : 99
+          },
+          "fake" : {
+            "type" : "boolean",
+            "description" : "Признак фиктивных координат автомобиля",
+            "example" : false
+          },
+          "noDepositFor1xClients" : {
+            "type" : "boolean",
+            "description" : "Признак отсутсвия депозита для клиентов с deposit_coefficient = 1",
+            "example" : false
+          },
+          "isMinTimeFromZone" : {
+            "type" : "boolean",
+            "description" : "Признак установки минимального времени по домашней зоне автомобиля",
+            "example" : false
+          },
+          "year" : {
+            "type" : "integer",
+            "description" : "Год выпуска",
+            "example" : 0
+          },
+          "seats" : {
+            "type" : "integer",
+            "description" : "Мест в салоне",
+            "example" : 4
+          },
+          "horsepower" : {
+            "type" : "integer",
+            "description" : "Мощность",
+            "example" : 100
+          },
+          "transmission" : {
+            "type" : "string",
+            "enum" : [ "front", "back", "all" ],
+            "description" : "Привод",
+            "example" : "front"
+          },
+          "engine" : {
+            "type" : "number",
+            "format" : "float",
+            "description" : "Объем двигателя",
+            "example" : 1.6
+          },
+          "in_garage" : {
+            "type" : "boolean",
+            "description" : "Признак нахождения авто в \"гараже\" клиенты",
+            "example" : true
+          },
+          "delivery_with_driver" : {
+            "type" : "boolean",
+            "description" : "флаг возможности заказа доставки с водителем",
+            "example" : true
+          },
+          "sharing_approved" : {
+            "type" : "boolean",
+            "description" : "флаг необходимости отображать базовые тарифы",
+            "example" : true
+          },
+          "prepaid_only" : {
+            "type" : "boolean",
+            "description" : "признак доступности авто только по предоплате, при этом тарифы в корточке авто располагаются выше базовых цен",
+            "example" : true
+          },
+          "club" : {
+            "type" : "boolean",
+            "description" : "признак клубного авто",
+            "example" : true
+          },
+          "club_address" : {
+            "type" : "string",
+            "description" : "Адрес клуба",
+            "example" : "Краснодар, ул. Гимназическая 40"
+          },
+          "club_work_time" : {
+            "type" : "string",
+            "description" : "Время работы клуба",
+            "example" : "Ежедневно, 09:00 - 20:00"
+          },
+          "club_find" : {
+            "type" : "string",
+            "description" : "Дополнительная информация к адресу",
+            "example" : "цокольный этаж, офис 5, домофон 419"
+          },
+          "minTimeForDeliveryWithDriver" : {
+            "type" : "integer",
+            "description" : "минимальное время поездки в режиме доставки с водителем",
+            "example" : 60
+          },
+          "deliveryCost" : {
+            "type" : "integer",
+            "description" : "Стоимость доставки / возврата в прокат",
+            "example" : 5000
+          },
+          "bookingCost" : {
+            "type" : "integer",
+            "description" : "Стоимость бронирования",
+            "example" : 50
+          }
+        }
+      },
+      "Category" : {
+        "type" : "object",
+        "required" : [ "id", "title", "icon", "wideIcon", "buttonTitle", "children", "mode" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "id раздела",
+            "example" : 495
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "название раздела",
+            "example" : "Mercedes-Benz C"
+          },
+          "icon" : {
+            "type" : "string",
+            "description" : "иконка 22x22pt",
+            "example" : "Mercedes"
+          },
+          "wideIcon" : {
+            "type" : "string",
+            "description" : "иконка 50x22pt (приоритетная)",
+            "example" : "Mercedes_wide"
+          },
+          "buttonTitle" : {
+            "type" : "string",
+            "description" : "текст для строки перехода в раздел",
+            "example" : "Смотреть все седаны"
+          },
+          "mode" : {
+            "type" : "string",
+            "enum" : [ "map", "delivery", "busy" ],
+            "description" : "Режим открытия карты для этого раздела. \nmap - открывается карта, \ndelivery - открывается режим доставки, \nbusy - открывается список \"занято\", при этом сам раздел отображается цветом light gray\n",
+            "example" : "map"
+          },
+          "children" : {
+            "type" : "array",
+            "description" : "массив подразделов",
+            "items" : {
+              "$ref" : "#/components/schemas/Category"
+            },
+            "example" : [ ]
+          }
+        }
+      },
+      "CarItem" : {
+        "type" : "object",
+        "required" : [ "id", "categoryTitle", "title", "img" ],
+        "properties" : {
+          "id" : {
+            "type" : "integer",
+            "description" : "id авто",
+            "example" : 4189
+          },
+          "cid" : {
+            "type" : "integer",
+            "description" : "id категории авто",
+            "example" : 517
+          },
+          "tid" : {
+            "type" : "integer",
+            "description" : "id типа авто",
+            "example" : 517
+          },
+          "title" : {
+            "type" : "string",
+            "description" : "название авто",
+            "example" : "LS 460 4.6L long"
+          },
+          "categoryTitle" : {
+            "type" : "string",
+            "description" : "название категории авто",
+            "example" : "Lexus LS"
+          },
+          "img" : {
+            "type" : "string",
+            "description" : "путь до картинки превью",
+            "example" : "files/aadcd7fcc96942e34bb1c083e59b91d5.png"
+          },
+          "status" : {
+            "type" : "integer",
+            "enum" : [ 0, 1, 4, 12 ],
+            "description" : "статус авто",
+            "example" : 0
+          },
+          "timeunit" : {
+            "type" : "integer",
+            "enum" : [ 0, 1, 2, 3, 4 ],
+            "description" : "единица измерения времени поездки",
+            "example" : 0
+          },
+          "tarifcount" : {
+            "type" : "integer",
+            "description" : "количество поминутных тарифов",
+            "minimum" : 1,
+            "maximum" : 5,
+            "example" : 1
+          },
+          "cost" : {
+            "type" : "integer",
+            "description" : "стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "maxcost" : {
+            "type" : "integer",
+            "description" : "максимальная стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "mincost" : {
+            "type" : "integer",
+            "description" : "минимальная стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "todaycost" : {
+            "type" : "integer",
+            "description" : "текущая стоимость единицы времени поездки",
+            "example" : 19
+          },
+          "parkingCost" : {
+            "type" : "integer",
+            "description" : "наценка к стоимости минуты ожидания при платной парковке",
+            "example" : 1
+          },
+          "waitingCost" : {
+            "type" : "integer",
+            "description" : "стоимости минуты ожидания",
+            "example" : 4
+          },
+          "weekendTariff" : {
+            "type" : "integer",
+            "description" : "наценка к стоимости единицы времени поездки в выходные/праздники (процент)",
+            "example" : 0
+          },
+          "zalog" : {
+            "type" : "integer",
+            "description" : "требуемый размер страхового депозита",
+            "example" : 10000
+          },
+          "category" : {
+            "type" : "string",
+            "description" : "категория авто",
+            "example" : "Lexus LS"
+          },
+          "tariffs" : {
+            "type" : "array",
+            "description" : "массив с поминутными тарифами",
+            "items" : {
+              "type" : "array",
+              "items" : {
+                "type" : "integer"
+              },
+              "example" : [ 3, 600 ]
+            }
+          },
+          "point" : {
+            "type" : "integer",
+            "description" : "id точки проката",
+            "example" : 578
+          },
+          "parkingtype" : {
+            "type" : "string",
+            "enum" : [ "restricted", "allow_free", "allow_paid" ],
+            "description" : "тип разрешения на платные парковки",
+            "example" : "allow_paid"
+          },
+          "devDeliveryTime" : {
+            "type" : "integer",
+            "description" : "ожидаемое время доставки в минутах",
+            "example" : 30
+          }
+        }
+      }
+    }
+  },
+  "security" : [ {
+    "needAuth" : [ ]
+  } ]
+}
