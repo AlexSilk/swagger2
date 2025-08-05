@@ -82,6 +82,58 @@
         }
       }
     },
+    "/v7/garage.php/add/{phone}/{key}/{device_id}" : {
+      "put" : {
+        "tags" : [ "Карточка автомобиля" ],
+        "summary" : "Добавление авто в гараж",
+        "operationId" : "PutDeviceToGarage",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/deviceParam"
+        }, {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/AddGarageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/garage.php/remove/{phone}/{key}/{device_id}" : {
+      "delete" : {
+        "tags" : [ "Карточка автомобиля" ],
+        "summary" : "Добавление авто в гараж",
+        "operationId" : "DeleteDeviceFromGarage",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/deviceParam"
+        }, {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeleteGarageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v9/catalog.php/getCatalog/{latitude}/{longitude}/{random}" : {
       "get" : {
         "tags" : [ "Каталог" ],
@@ -132,6 +184,66 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/garage.php/list/{phone}/{key}/{latitude}/{longitude}/{random}" : {
+      "get" : {
+        "tags" : [ "Каталог" ],
+        "summary" : "Список автомобилей для вкладки \"Гараж\" каталога",
+        "operationId" : "getGarageWithPhone",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        }, {
+          "$ref" : "#/components/parameters/latitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/longitudeParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/GarageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/new_cars.php/list/{phone}/{key}/{latitude}/{longitude}/{random}" : {
+      "get" : {
+        "tags" : [ "Каталог" ],
+        "summary" : "Список автомобилей для вкладки \"Новинки\" каталога",
+        "operationId" : "getNewCarWithPhone",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        }, {
+          "$ref" : "#/components/parameters/latitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/longitudeParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/NewCarResponse"
                 }
               }
             }
@@ -694,6 +806,173 @@
       }
     },
     "schemas" : {
+      "AddGarageResponse" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "type" : "string",
+            "example" : "saved"
+          }
+        }
+      },
+      "DeleteGarageResponse" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "type" : "string",
+            "example" : "deleted"
+          }
+        }
+      },
+      "GarageResponse" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "type" : "object",
+            "required" : [ "id", "typeId", "categoryTitle", "baseCategoryTitle", "image", "distance", "status", "stateInfo", "stateTime", "allowPickup" ],
+            "properties" : {
+              "id" : {
+                "type" : "integer",
+                "description" : "id авто",
+                "example" : 4189
+              },
+              "typeId" : {
+                "type" : "integer",
+                "description" : "id типа авто",
+                "example" : 517
+              },
+              "title" : {
+                "type" : "string",
+                "description" : "название авто",
+                "example" : "LS 460 4.6L long"
+              },
+              "categoryTitle" : {
+                "type" : "string",
+                "description" : "категория автомобиля",
+                "example" : "Lexus"
+              },
+              "baseCategoryTitle" : {
+                "type" : "string",
+                "description" : "базовый раздел каталога",
+                "example" : "Седан"
+              },
+              "image" : {
+                "type" : "string",
+                "description" : "путь до картинки превью",
+                "example" : "files/aadcd7fcc96942e34bb1c083e59b91d5.png"
+              },
+              "distance" : {
+                "type" : "number",
+                "format" : "float",
+                "description" : "дистанция до автомобиля, км"
+              },
+              "status" : {
+                "type" : "integer",
+                "enum" : [ 0, 1, 4, 12 ],
+                "description" : "статус авто",
+                "example" : 0
+              },
+              "stateInfo" : {
+                "type" : "string",
+                "description" : "причина статуса",
+                "example" : "У владельца"
+              },
+              "stateTime" : {
+                "type" : "integer",
+                "description" : "время статуса (сек)",
+                "example" : 1403823
+              },
+              "allowPickup" : {
+                "type" : "boolean",
+                "description" : "признак возможности отображения авто на карте",
+                "example" : true
+              }
+            }
+          }
+        }
+      },
+      "NewCarResponse" : {
+        "type" : "object",
+        "required" : [ "success", "result" ],
+        "properties" : {
+          "success" : {
+            "type" : "boolean",
+            "description" : "Признак успешного выполнения запроса"
+          },
+          "result" : {
+            "type" : "object",
+            "required" : [ "id", "typeId", "categoryTitle", "baseCategoryTitle", "image", "distance", "status", "stateInfo", "stateTime" ],
+            "properties" : {
+              "id" : {
+                "type" : "integer",
+                "description" : "id авто",
+                "example" : 4189
+              },
+              "typeId" : {
+                "type" : "integer",
+                "description" : "id типа авто",
+                "example" : 517
+              },
+              "title" : {
+                "type" : "string",
+                "description" : "название авто",
+                "example" : "LS 460 4.6L long"
+              },
+              "categoryTitle" : {
+                "type" : "string",
+                "description" : "категория автомобиля",
+                "example" : "Lexus"
+              },
+              "baseCategoryTitle" : {
+                "type" : "string",
+                "description" : "базовый раздел каталога",
+                "example" : "Седан"
+              },
+              "image" : {
+                "type" : "string",
+                "description" : "путь до картинки превью",
+                "example" : "files/aadcd7fcc96942e34bb1c083e59b91d5.png"
+              },
+              "distance" : {
+                "type" : "number",
+                "format" : "float",
+                "description" : "дистанция до автомобиля, км"
+              },
+              "status" : {
+                "type" : "integer",
+                "enum" : [ 0, 1, 4, 12 ],
+                "description" : "статус авто",
+                "example" : 0
+              },
+              "stateInfo" : {
+                "type" : "string",
+                "description" : "причина статуса",
+                "example" : "У владельца"
+              },
+              "stateTime" : {
+                "type" : "integer",
+                "description" : "время статуса (сек)",
+                "example" : 1403823
+              }
+            }
+          }
+        }
+      },
       "CategoryResponse" : {
         "type" : "object",
         "required" : [ "success", "result" ],
