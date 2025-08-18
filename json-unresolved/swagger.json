@@ -10,7 +10,7 @@
   "info" : {
     "version" : "1.0.0",
     "title" : "Some methods",
-    "description" : "Обновлённые методы приложения, от 18.08.2025 22:43"
+    "description" : "Обновлённые методы приложения, от 18.08.2025 23:17"
   },
   "tags" : [ {
     "name" : "Карточка автомобиля",
@@ -685,6 +685,110 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/DeviceTableItem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/delivery.php/delivery" : {
+      "post" : {
+        "tags" : [ "Доставка" ],
+        "summary" : "заказ доставки",
+        "operationId" : "deliveryRequest",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "id автомобиля",
+                    "example" : 4155
+                  },
+                  "mode" : {
+                    "type" : "string",
+                    "enum" : [ "with_driver", "normal" ],
+                    "default" : "normal",
+                    "description" : "режим доставки, обычный или с водителем",
+                    "example" : "normal"
+                  },
+                  "latitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта",
+                    "example" : 55.751667
+                  },
+                  "longitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота",
+                    "example" : 37.617778
+                  }
+                },
+                "required" : [ "phone", "key", "device_id", "mode", "latitude", "longitude" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "delivery created"
+                    },
+                    "metrica_info" : {
+                      "type" : "object",
+                      "description" : "данные для метрики",
+                      "properties" : {
+                        "first_session" : {
+                          "type" : "boolean",
+                          "description" : "Признак первой сессии клиента",
+                          "example" : false
+                        },
+                        "model" : {
+                          "type" : "string",
+                          "description" : "Модель авто",
+                          "example" : "A4"
+                        },
+                        "brand" : {
+                          "type" : "string",
+                          "description" : "Бренд авто",
+                          "example" : "Audi"
+                        },
+                        "price" : {
+                          "type" : "string",
+                          "description" : "Минимальная стоимость аренды",
+                          "example" : 2000
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
