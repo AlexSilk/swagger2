@@ -25,8 +25,8 @@
     "name" : "Доставка",
     "description" : "Методы используемые на вкладке \"Доставка\""
   }, {
-    "name" : "Сессия",
-    "description" : "Методы используемые в режиме Поездки"
+    "name" : "Аренда",
+    "description" : "Работа с сессией каршеринга"
   } ],
   "paths" : {
     "/v9/device_card.php/guest/{device_id}/{random}" : {
@@ -691,6 +691,277 @@
           }
         }
       }
+    },
+    "/v9/rent_state.php/current//{phone}/{key}/{random}" : {
+      "get" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Список автомобилей для вкладки \"Новинки\" каталога",
+        "operationId" : "getRentState",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "properties" : {
+                    "currentTariff" : {
+                      "type" : "string",
+                      "description" : "строка стоимости",
+                      "example" : "бесплатно"
+                    },
+                    "freeBookingNow" : {
+                      "type" : "boolean",
+                      "description" : "признак бесплатного бронирования в настоящий момент",
+                      "example" : false
+                    },
+                    "finalCost" : {
+                      "type" : "integer",
+                      "description" : "текущая стоимость",
+                      "example" : 300
+                    },
+                    "alreadyPaid" : {
+                      "type" : "integer",
+                      "description" : "сумма оплаченная за сессию, сейчас не используется",
+                      "example" : 300
+                    },
+                    "debtSession" : {
+                      "type" : "integer",
+                      "description" : "задолженность в сессии",
+                      "example" : 300
+                    },
+                    "timeshift" : {
+                      "type" : "integer",
+                      "description" : "время с начала ивента или время до завершения",
+                      "example" : 1000
+                    },
+                    "isTimer" : {
+                      "type" : "boolean",
+                      "description" : "признак обратного отсчёта от timeshift",
+                      "example" : false
+                    },
+                    "passTimeActive" : {
+                      "type" : "boolean",
+                      "description" : "признак наличия действующего тарифа в настоящий момент",
+                      "example" : false
+                    },
+                    "passTimeRtb" : {
+                      "type" : "boolean",
+                      "description" : "признак тарифа с выкупом. Скрывает кнопку завершения сессии, запрещает смену тарифа",
+                      "example" : false
+                    },
+                    "isService" : {
+                      "type" : "integer",
+                      "enum" : [ 0, 1, 2 ],
+                      "description" : "тип сессии. 0 - обычная, 1 - сервисная, 2 - владельца",
+                      "example" : 1
+                    },
+                    "state" : {
+                      "type" : "string",
+                      "enum" : [ "parking", "waiting", "delivery", "booking_request", "view", "act", "selfie", "booking", "rent", "" ],
+                      "default" : "",
+                      "description" : "статус аренды",
+                      "example" : "delivery"
+                    },
+                    "event" : {
+                      "type" : "string",
+                      "description" : "название текущего режима",
+                      "example" : "Оформление"
+                    },
+                    "sesId" : {
+                      "type" : "integer",
+                      "description" : "id сессии",
+                      "example" : 12345
+                    },
+                    "deviceId" : {
+                      "type" : "integer",
+                      "description" : "id авто",
+                      "example" : 4144
+                    },
+                    "parkingType" : {
+                      "type" : "string",
+                      "enum" : [ "restricted", "allow_free", "allow_paid" ],
+                      "default" : "allow_paid",
+                      "description" : "тип парковки автомобиля",
+                      "example" : "allow_paid"
+                    },
+                    "region" : {
+                      "type" : "integer",
+                      "description" : "регион автомобиля",
+                      "example" : 99
+                    },
+                    "osagoUrl" : {
+                      "type" : "string",
+                      "description" : "ссылка на страховку",
+                      "example" : "https://img.voron.io/pdf/1735405025.pdf"
+                    },
+                    "prePaidTariffs" : {
+                      "type" : "array",
+                      "description" : "массив дополнительных тарифов",
+                      "items" : {
+                        "type" : "object",
+                        "description" : "объект с данными о доп. тарифе",
+                        "required" : [ "id", "duration", "price", "with_driver", "rent_to_buy", "daily_payment" ],
+                        "properties" : {
+                          "id" : {
+                            "type" : "integer",
+                            "description" : "id тарифа",
+                            "example" : 1
+                          },
+                          "duration" : {
+                            "type" : "integer",
+                            "description" : "продолжительность (минуты)",
+                            "example" : 1440
+                          },
+                          "price" : {
+                            "type" : "integer",
+                            "description" : "стоимость",
+                            "example" : 12000
+                          },
+                          "with_driver" : {
+                            "type" : "boolean",
+                            "description" : "признак доставки с водителем",
+                            "example" : false
+                          },
+                          "rent_to_buy" : {
+                            "type" : "boolean",
+                            "description" : "признак тарифа с выкупом",
+                            "example" : false
+                          },
+                          "daily_payment" : {
+                            "type" : "integer",
+                            "description" : "суточный взнос для тарифа с выкупом",
+                            "example" : 1440
+                          }
+                        }
+                      }
+                    },
+                    "minToPassTimeEnd" : {
+                      "type" : "integer",
+                      "description" : "кол-во минут до завершения тарифа, используется в алерте",
+                      "example" : 50
+                    },
+                    "eventsHistory" : {
+                      "type" : "array",
+                      "description" : "список событий сессии",
+                      "items" : {
+                        "type" : "object",
+                        "description" : "объект с данными события",
+                        "required" : [ "type", "start", "end" ],
+                        "properties" : {
+                          "type" : {
+                            "type" : "string",
+                            "description" : "тип события",
+                            "example" : "Парковка"
+                          },
+                          "start" : {
+                            "type" : "string",
+                            "description" : "начало события",
+                            "example" : "2025-08-18 00:00:00"
+                          },
+                          "end" : {
+                            "type" : "string",
+                            "description" : "конец события",
+                            "example" : "2025-08-18 00:15:27"
+                          }
+                        }
+                      }
+                    },
+                    "sessionMileage" : {
+                      "type" : "integer",
+                      "description" : "пробег сессии",
+                      "example" : 152
+                    },
+                    "dailyMileage" : {
+                      "type" : "integer",
+                      "description" : "пробег за день",
+                      "example" : 152
+                    },
+                    "minTimeLeft" : {
+                      "type" : "integer",
+                      "description" : "оставшееся время до минимального времени поездки, используется в алерте",
+                      "example" : 0
+                    },
+                    "minTimeEffective" : {
+                      "type" : "integer",
+                      "description" : "минимальное время поездки на данном автомобиле, используется в алерте",
+                      "example" : 0
+                    },
+                    "needPhotoSelfie" : {
+                      "type" : "boolean",
+                      "description" : "признак необходимости сделать фотоселфи",
+                      "example" : false
+                    },
+                    "needVideoSelfie" : {
+                      "type" : "boolean",
+                      "description" : "признак необходимости сделать видеоселфи",
+                      "example" : false
+                    },
+                    "videoSelfieEnable" : {
+                      "type" : "boolean",
+                      "description" : "признак возможности клиента делать видеоселфи, если false, то запрашивается фото",
+                      "example" : true
+                    },
+                    "subscribeTariffId" : {
+                      "type" : "integer",
+                      "description" : "при значении отличном от нуля, для текущего тарифа включено автопродление. Используется при формировании страницы смены тарифа/добавления времени"
+                    },
+                    "role" : {
+                      "type" : "string",
+                      "enum" : [ "client", "driver", "" ],
+                      "description" : "роль, используется в доставке с водителем",
+                      "example" : ""
+                    },
+                    "delivery_state" : {
+                      "type" : "string",
+                      "description" : "статус доставки",
+                      "example" : "На подтверждении"
+                    },
+                    "can_finish" : {
+                      "type" : "boolean",
+                      "description" : "признак разрешения на завершение сессии",
+                      "example" : true
+                    },
+                    "fail_finish_reason" : {
+                      "type" : "string",
+                      "description" : "причина запрета на завершение",
+                      "example" : "Попросите водителя остановиться и включить режим Парковка для завершения поездки"
+                    },
+                    "prepaid_only" : {
+                      "type" : "boolean",
+                      "description" : "признак доступности авто только по предоплате (покупки тарифа)",
+                      "example" : false
+                    },
+                    "club" : {
+                      "type" : "boolean",
+                      "description" : "признак клубного авто, используется для отображения договора до оформления и корректного отображения страницы завершения сессии",
+                      "example" : false
+                    },
+                    "finish_code_required" : {
+                      "type" : "boolean",
+                      "description" : "для завершения сессии требуется ввести код завершения, используется для клубных авто",
+                      "example" : false
+                    },
+                    "without_telematic" : {
+                      "type" : "boolean",
+                      "description" : "признак отсутствия телематики на автомобиле, используется при завершении сессии и переходе в парковку",
+                      "example" : false
+                    }
+                  },
+                  "required" : [ "currentTariff", "freeBookingNow", "finalCost", "alreadyPaid", "debtSession", "timeshift", "isTimer", "passTimeActive", "passTimeRtb", "isService", "state", "event", "sesId", "deviceId", "parkingType", "region", "osagoUrl", "prePaidTariffs", "minToPassTimeEnd", "eventsHistory", "sessionMileage", "dailyMileage", "minTimeLeft", "minTimeEffective", "needPhotoSelfie", "needVideoSelfie", "videoSelfieEnable", "subscribeTariffId", "role", "delivery_state", "can_finish", "fail_finish_reason", "prepaid_only", "club", "finish_code_required", "without_telematic" ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components" : {
@@ -1286,7 +1557,7 @@
           },
           "in_garage" : {
             "type" : "boolean",
-            "description" : "Признак нахождения авто в \"гараже\" клиенты",
+            "description" : "Признак нахождения авто в \"гараже\" клиента",
             "example" : true
           }
         }
