@@ -10,7 +10,7 @@
   "info" : {
     "version" : "1.0.0",
     "title" : "Some methods",
-    "description" : "Обновлённые методы приложения, от 18.08.2025 23:17"
+    "description" : "Обновлённые методы приложения, от 27.08.2025 20:00"
   },
   "tags" : [ {
     "name" : "Карточка автомобиля",
@@ -101,6 +101,68 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/AddGarageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/geocoding.php/reverse//{latitude}/{longitude}/{key_alt}/{random}" : {
+      "get" : {
+        "tags" : [ "Карточка автомобиля" ],
+        "summary" : "Обратное геокодирование из координат в адрес",
+        "operationId" : "reverseGeocoding",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/latitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/longitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/keyAltParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса",
+                      "example" : true
+                    },
+                    "result" : {
+                      "type" : "object",
+                      "description" : "Адрес",
+                      "properties" : {
+                        "country" : {
+                          "type" : "string",
+                          "description" : "страна",
+                          "example" : "Россия"
+                        },
+                        "city_with_type" : {
+                          "type" : "string",
+                          "description" : "город",
+                          "example" : "г Москва"
+                        },
+                        "street_with_type" : {
+                          "type" : "string",
+                          "description" : "улица",
+                          "example" : "ул Героев Панфиловцев"
+                        },
+                        "house_with_type" : {
+                          "type" : "string",
+                          "description" : "дом",
+                          "example" : 8
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -1080,11 +1142,21 @@
       "keyParam" : {
         "in" : "path",
         "name" : "key",
-        "description" : "токен авторизации запроса",
+        "description" : "токен авторизации запроса, sha256(phone.secret)",
         "required" : true,
         "schema" : {
           "type" : "string",
           "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+        }
+      },
+      "keyAltParam" : {
+        "in" : "path",
+        "name" : "key_alt",
+        "description" : "токен авторизации запроса, sha256(secret)",
+        "required" : true,
+        "schema" : {
+          "type" : "string",
+          "example" : "326c1fbfe64b3d0c03ffee29e8221f2e0bb1d02aaf7d1499c70c13ae82d50013"
         }
       },
       "randomParam" : {
