@@ -108,6 +108,32 @@
         }
       }
     },
+    "/v7/garage.php/remove/{phone}/{key}/{device_id}" : {
+      "delete" : {
+        "tags" : [ "Карточка автомобиля" ],
+        "summary" : "Удаление авто из гаража",
+        "operationId" : "DeleteDeviceFromGarage",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/deviceParam"
+        }, {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeleteGarageResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v9/geocoding.php/reverse//{latitude}/{longitude}/{key_alt}/{random}" : {
       "get" : {
         "tags" : [ "Карточка автомобиля" ],
@@ -163,32 +189,6 @@
                       }
                     }
                   }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v7/garage.php/remove/{phone}/{key}/{device_id}" : {
-      "delete" : {
-        "tags" : [ "Карточка автомобиля" ],
-        "summary" : "Удаление авто из гаража",
-        "operationId" : "DeleteDeviceFromGarage",
-        "parameters" : [ {
-          "$ref" : "#/components/parameters/deviceParam"
-        }, {
-          "$ref" : "#/components/parameters/phoneParam"
-        }, {
-          "$ref" : "#/components/parameters/keyParam"
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Результат запроса",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/DeleteGarageResponse"
                 }
               }
             }
