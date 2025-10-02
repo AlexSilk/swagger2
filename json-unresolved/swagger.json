@@ -1286,7 +1286,7 @@
     "/v7/session_end.php/client" : {
       "post" : {
         "tags" : [ "Аренда" ],
-        "summary" : "завершение сервисной сессии",
+        "summary" : "завершение сессии клиента",
         "operationId" : "clientSessionEnd",
         "description" : "Вызывается при завершении сессии\n",
         "requestBody" : {
