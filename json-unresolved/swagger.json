@@ -858,7 +858,7 @@
         }
       }
     },
-    "/v9/rent_state.php/current//{phone}/{key}/{random}" : {
+    "/v9/rent_state.php/current/{phone}/{key}/{random}" : {
       "get" : {
         "tags" : [ "Аренда" ],
         "summary" : "Данные для формирования основной страницы во время аренды автомобиля",
@@ -1122,6 +1122,865 @@
                     }
                   },
                   "required" : [ "currentTariff", "freeBookingNow", "finalCost", "alreadyPaid", "debtSession", "timeshift", "isTimer", "passTimeActive", "passTimeRtb", "isService", "state", "event", "sesId", "deviceId", "parkingType", "region", "osagoUrl", "prePaidTariffs", "minToPassTimeEnd", "eventsHistory", "sessionMileage", "dailyMileage", "minTimeLeft", "minTimeEffective", "needPhotoSelfie", "needVideoSelfie", "videoSelfieEnable", "subscribeTariffId", "role", "delivery_state", "can_finish", "fail_finish_reason", "prepaid_only", "club", "finish_code_required", "without_telematic" ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/session_end.php/service" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "завершение сервисной сессии",
+        "operationId" : "serviceSessionEnd",
+        "description" : "Вызывается при завершении сессии владельцем или сотрудником\n",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "parking" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак устновки флага \"Платная парковка\"",
+                    "example" : 1
+                  },
+                  "deviceID" : {
+                    "type" : "integer",
+                    "description" : "ID автомобиля",
+                    "example" : 4155
+                  },
+                  "bodyWash" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак устновки флага \"Мойка кузова\"",
+                    "example" : 1
+                  },
+                  "interiorWash" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак устновки флага \"Мойка салона\"",
+                    "example" : 1
+                  },
+                  "service" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак устновки флага \"Сервис\"",
+                    "example" : 1
+                  },
+                  "noDamage" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак устновки флага \"Нет новых повреждений\"",
+                    "example" : 1
+                  },
+                  "movingType" : {
+                    "type" : "string",
+                    "enum" : [ "from_paid", "task", "delivery", "delivery_with_driver", "" ],
+                    "description" : "тип перегона (выбор только для сотрудников)",
+                    "example" : "",
+                    "default" : ""
+                  },
+                  "appLatitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта по данным GPS телефона",
+                    "example" : 55.751667
+                  },
+                  "appLongitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота по данным GPS телефона",
+                    "example" : 37.617778
+                  },
+                  "clientLatitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта по указанным клиентом координатах (запрашивается если GPS авто не видит спутники)",
+                    "example" : 55.751667
+                  },
+                  "clientLongitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота по указанным клиентом координатах (запрашивается если GPS авто не видит спутники)",
+                    "example" : 37.617778
+                  },
+                  "hideTg" : {
+                    "type" : "integer",
+                    "enum" : [ 1 ],
+                    "description" : "служебный флаг, для обратной совместимости с предыдущими версиями приложения",
+                    "example" : 1,
+                    "default" : 1
+                  },
+                  "finishCode" : {
+                    "type" : "string",
+                    "description" : "Код завершения сессии для клубных автомобилей",
+                    "example" : "1111"
+                  }
+                },
+                "required" : [ "phone", "key", "parking", "deviceID", "bodyWash", "interiorWash", "service", "noDamage" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "rent canceled"
+                    },
+                    "metrica_info" : {
+                      "type" : "object",
+                      "description" : "данные для метрики",
+                      "properties" : {
+                        "first_session" : {
+                          "type" : "boolean",
+                          "description" : "Признак первой сессии клиента",
+                          "example" : false
+                        },
+                        "model" : {
+                          "type" : "string",
+                          "description" : "Модель авто",
+                          "example" : "A4"
+                        },
+                        "brand" : {
+                          "type" : "string",
+                          "description" : "Бренд авто",
+                          "example" : "Audi"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/session_end.php/client" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "завершение сервисной сессии",
+        "operationId" : "clientSessionEnd",
+        "description" : "Вызывается при завершении сессии\n",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "parking" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак устновки флага \"Платная парковка\"",
+                    "example" : 1
+                  },
+                  "deviceID" : {
+                    "type" : "integer",
+                    "description" : "ID автомобиля",
+                    "example" : 4155
+                  },
+                  "appLatitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта по данным GPS телефона",
+                    "example" : 55.751667
+                  },
+                  "appLongitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота по данным GPS телефона",
+                    "example" : 37.617778
+                  },
+                  "clientLatitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, широта по указанным клиентом координатах (запрашивается если GPS авто не видит спутники)",
+                    "example" : 55.751667
+                  },
+                  "clientLongitude" : {
+                    "type" : "number",
+                    "format" : "double",
+                    "description" : "геопозиция, долгота по указанным клиентом координатах (запрашивается если GPS авто не видит спутники)",
+                    "example" : 37.617778
+                  },
+                  "hideTg" : {
+                    "type" : "integer",
+                    "enum" : [ 1 ],
+                    "description" : "служебный флаг, для обратной совместимости с предыдущими версиями приложения",
+                    "example" : 1,
+                    "default" : 1
+                  },
+                  "finishCode" : {
+                    "type" : "string",
+                    "description" : "Код завершения сессии для клубных автомобилей",
+                    "example" : "1111"
+                  },
+                  "parkingNumber" : {
+                    "type" : "string",
+                    "description" : "номер парковки (запрашивается если не может определится автоматически)",
+                    "example" : "0302"
+                  }
+                },
+                "required" : [ "phone", "key", "deviceID" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "rent finished"
+                    },
+                    "check" : {
+                      "type" : "object",
+                      "description" : "данные для отображения чека",
+                      "properties" : {
+                        "booking" : {
+                          "type" : "object",
+                          "properties" : {
+                            "time" : {
+                              "type" : "integer",
+                              "description" : "время бронирования (минуты)",
+                              "example" : 10
+                            },
+                            "cost" : {
+                              "type" : "integer",
+                              "description" : "стоимость",
+                              "example" : 0
+                            },
+                            "tarif" : {
+                              "type" : "integer",
+                              "description" : "тарифная стоимость минуты",
+                              "example" : 0
+                            }
+                          }
+                        },
+                        "rent" : {
+                          "type" : "object",
+                          "properties" : {
+                            "time" : {
+                              "type" : "integer",
+                              "description" : "время поездки (минуты)",
+                              "example" : 5
+                            },
+                            "cost" : {
+                              "type" : "integer",
+                              "description" : "стоимость",
+                              "example" : 1000
+                            },
+                            "tarif" : {
+                              "type" : "integer",
+                              "description" : "тарифная стоимость минуты",
+                              "example" : 20
+                            }
+                          }
+                        },
+                        "waiting" : {
+                          "type" : "object",
+                          "properties" : {
+                            "time" : {
+                              "type" : "integer",
+                              "description" : "время ожидания (минуты)",
+                              "example" : 10
+                            },
+                            "cost" : {
+                              "type" : "integer",
+                              "description" : "стоимость",
+                              "example" : 50
+                            },
+                            "tarif" : {
+                              "type" : "integer",
+                              "description" : "тарифная стоимость минуты",
+                              "example" : 5
+                            }
+                          }
+                        },
+                        "parking" : {
+                          "type" : "object",
+                          "properties" : {
+                            "time" : {
+                              "type" : "integer",
+                              "description" : "время платной парковки (минуты)",
+                              "example" : 5
+                            },
+                            "cost" : {
+                              "type" : "integer",
+                              "description" : "стоимость",
+                              "example" : 50
+                            },
+                            "tarif" : {
+                              "type" : "integer",
+                              "description" : "тарифная стоимость минуты",
+                              "example" : 10
+                            }
+                          }
+                        },
+                        "bonus" : {
+                          "type" : "integer",
+                          "description" : "сумма выставленная к оплате с бонусного счёта",
+                          "example" : 999
+                        },
+                        "sum" : {
+                          "type" : "integer",
+                          "description" : "сумма выставленная к оплате с карты",
+                          "example" : 59
+                        },
+                        "ses" : {
+                          "type" : "integer",
+                          "description" : "id сессии",
+                          "example" : 100000
+                        },
+                        "date" : {
+                          "type" : "string",
+                          "description" : "дата",
+                          "example" : "26.07.2023"
+                        }
+                      }
+                    },
+                    "session" : {
+                      "type" : "integer",
+                      "description" : "id сессии",
+                      "example" : 100000
+                    },
+                    "metrica_info" : {
+                      "type" : "object",
+                      "description" : "данные для метрики",
+                      "properties" : {
+                        "first_session" : {
+                          "type" : "boolean",
+                          "description" : "Признак первой сессии клиента",
+                          "example" : false
+                        },
+                        "model" : {
+                          "type" : "string",
+                          "description" : "Модель авто",
+                          "example" : "A4"
+                        },
+                        "brand" : {
+                          "type" : "string",
+                          "description" : "Бренд авто",
+                          "example" : "Audi"
+                        },
+                        "price" : {
+                          "type" : "string",
+                          "description" : "Стоимость аренды",
+                          "example" : 2000
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/parking.php/start" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Переход в режим парковки/ожидания",
+        "operationId" : "parkingStart",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "mode" : {
+                    "type" : "string",
+                    "description" : "режим",
+                    "enum" : [ "waiting", "parking" ]
+                  },
+                  "arm_pass" : {
+                    "type" : "integer",
+                    "description" : "флаг позволяющий переход в режим парковки/ожидания без команд на телематику авто",
+                    "example" : 0
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "ID автомобиля",
+                    "example" : 4155
+                  },
+                  "parking_place" : {
+                    "type" : "string",
+                    "description" : "номер парковки (запрашивается если не может определится автоматически)",
+                    "example" : "0302"
+                  },
+                  "hide_telegram_alert" : {
+                    "type" : "integer",
+                    "enum" : [ 1 ],
+                    "description" : "служебный флаг, для обратной совместимости с предыдущими версиями приложения",
+                    "example" : 1,
+                    "default" : 1
+                  }
+                },
+                "required" : [ "phone", "key", "device_id", "mode", "arm_pass" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "parking success"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/parking.php/end" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Переход из парковки в аренду",
+        "operationId" : "parkingEnd",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "ID автомобиля",
+                    "example" : 4155
+                  }
+                },
+                "required" : [ "phone", "key", "device_id" ]
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "parking finished"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v7/parking.php/check/{phone}/{key}/{device_id}/{latitude}/{longitude}/{random}:" : {
+      "get" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "проверка наличия платной парковки в координатах полученных с GPS авто или указанных в запросе",
+        "operationId" : "checkParking",
+        "description" : "Вызывается при завершении сессии для проверки платной парковки поблизости\n",
+        "parameters" : [ {
+          "$ref" : "#/components/parameters/phoneParam"
+        }, {
+          "$ref" : "#/components/parameters/randomParam"
+        }, {
+          "$ref" : "#/components/parameters/keyParam"
+        }, {
+          "$ref" : "#/components/parameters/latitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/longitudeParam"
+        }, {
+          "$ref" : "#/components/parameters/deviceParam"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Результат. false, если поблизости есть парковка"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v8/view.php/start" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Переход из режима бронирования в режим осмотра",
+        "operationId" : "viewStart",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "phone", "key", "ses_id", "device_id" ],
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "ses_id" : {
+                    "type" : "integer",
+                    "description" : "id сессии",
+                    "example" : 1234
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "id автомобиля",
+                    "example" : 1234
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "init complete"
+                    },
+                    "timeelapsed" : {
+                      "type" : "integer",
+                      "description" : "оставшееся кол-во секунд бесплатного осмотра",
+                      "example" : 200
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v8/view.php/end" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Переход из режима осмотра в режим подписи акта",
+        "operationId" : "viewEnd",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "phone", "key", "ses_id", "device_id", "interior", "exterior", "documents" ],
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "ses_id" : {
+                    "type" : "integer",
+                    "description" : "id сессии",
+                    "example" : 1234
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "id автомобиля",
+                    "example" : 1234
+                  },
+                  "interior" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак чистого салона"
+                  },
+                  "exterior" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "признак чистого кузова"
+                  },
+                  "documents" : {
+                    "type" : "integer",
+                    "enum" : [ 0, 1 ],
+                    "description" : "наличие документов"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "init complete"
+                    },
+                    "timeelapsed" : {
+                      "type" : "integer",
+                      "description" : "оставшееся кол-во секунд бесплатного осмотра",
+                      "example" : 200
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v8/view.php/cancel" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Отмена аренды из режима осмотра",
+        "operationId" : "viewCancel",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "phone", "key", "ses_id", "device_id" ],
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "ses_id" : {
+                    "type" : "integer",
+                    "description" : "id сессии",
+                    "example" : 1234
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "id автомобиля",
+                    "example" : 1234
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "view canceled"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v9/booking.php/request_cancel" : {
+      "post" : {
+        "tags" : [ "Аренда" ],
+        "summary" : "Отмена запроса на бронирование",
+        "operationId" : "bookingRequestCancel",
+        "requestBody" : {
+          "required" : true,
+          "content" : {
+            "application/x-www-form-urlencoded" : {
+              "schema" : {
+                "type" : "object",
+                "required" : [ "phone", "key", "ses_id", "device_id" ],
+                "properties" : {
+                  "phone" : {
+                    "type" : "integer",
+                    "description" : "номер телефона клиента",
+                    "example" : 9647725777
+                  },
+                  "key" : {
+                    "type" : "string",
+                    "description" : "токен авторизации запроса",
+                    "example" : "0f279a72ed51762ecf9f74cd7357408c30373139ac15d17db6b7750893afc0a7"
+                  },
+                  "ses_id" : {
+                    "type" : "integer",
+                    "description" : "id сессии",
+                    "example" : 1234
+                  },
+                  "device_id" : {
+                    "type" : "integer",
+                    "description" : "id автомобиля",
+                    "example" : 1234
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Результат запроса",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "required" : [ "success", "result" ],
+                  "properties" : {
+                    "success" : {
+                      "type" : "boolean",
+                      "description" : "Признак успешного выполнения запроса"
+                    },
+                    "result" : {
+                      "type" : "string",
+                      "description" : "Результат выполнения запроса",
+                      "example" : "booking request canceled"
+                    }
+                  }
                 }
               }
             }
